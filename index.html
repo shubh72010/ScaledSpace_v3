@@ -1,32 +1,657 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#181818" />
-    <title>ScaledSpace Nothing OS</title>
-    <link rel="manifest" href="manifest.json" />
-    <link rel="icon" href="icon-192.png" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space App</title>
     <style>
-      body {
-        background: #0c0c0e;
-        margin: 0;
-        font-family: 'Inter', Arial, sans-serif;
-        color: #f1f1f1;
-      }
-      .text-2xl { font-size: 2rem; }
-      .font-semibold { font-weight: 600; }
-      .text-center { text-align: center; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 20px 0;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ddd, #aaa);
+            cursor: pointer;
+        }
+
+        .main-content {
+            padding: 24px 20px;
+            height: calc(100% - 80px);
+            overflow-y: auto;
+        }
+
+        .add-reminder-btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-reminder-btn:hover {
+            background: #0056d3;
+            transform: translateY(-2px);
+        }
+
+        .reminder-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid #007AFF;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reminder-text {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .reminder-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-complete {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-complete:hover {
+            background: #218838;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000;
+            margin: 24px 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .add-task-btn {
+            background: none;
+            border: 2px dashed #007AFF;
+            color: #007AFF;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-task-btn:hover {
+            background: #007AFF;
+            color: white;
+        }
+
+        .upcoming-list {
+            list-style: none;
+            min-height: 60px;
+        }
+
+        .upcoming-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .upcoming-item:hover {
+            background: #f8f9fa;
+            margin: 0 -20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+        }
+
+        .upcoming-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #007AFF;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .item-checkbox.completed {
+            background: #007AFF;
+            color: white;
+        }
+
+        .item-checkbox.completed::after {
+            content: '✓';
+            font-size: 12px;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .item-title.completed {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .item-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .item-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s;
+        }
+
+        .upcoming-item:hover .item-delete {
+            opacity: 1;
+        }
+
+        .collections-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .collection-item {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            position: relative;
+        }
+
+        .collection-item:hover {
+            transform: scale(1.05);
+        }
+
+        .collection-1 { background: linear-gradient(135deg, #ffeaa7, #fdcb6e); }
+        .collection-2 { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+        .collection-3 { background: linear-gradient(135deg, #fd79a8, #e84393); }
+        .collection-4 { background: linear-gradient(135deg, #00b894, #00a085); }
+        .collection-5 { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+        .collection-6 { background: linear-gradient(135deg, #e17055, #d63031); }
+
+        .collection-add {
+            background: #f8f9fa;
+            border: 2px dashed #ccc;
+            color: #666;
+        }
+
+        .collection-add:hover {
+            border-color: #007AFF;
+            color: #007AFF;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            padding: 40px 20px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            width: 320px;
+            max-width: 90vw;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .input-group textarea {
+            min-height: 80px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .btn-cancel:hover {
+            background: #e9ecef;
+        }
+
+        .btn-save {
+            background: #007AFF;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #0056d3;
+        }
     </style>
-  </head>
-  <body>
-    <div id="root"></div>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+
+
+            <div class="header">
+                <h1 class="title">Space</h1>
+                <div class="profile-pic"></div>
+            </div>
+
+            <div class="main-content">
+                <button class="add-reminder-btn" onclick="openReminderModal()">
+                    + Add New Reminder
+                </button>
+
+                <div id="reminders-container">
+                    <!-- Reminders will be added here -->
+                </div>
+
+                <h2 class="section-title">
+                    Upcoming
+                    <button class="add-task-btn" onclick="openTaskModal()">+ Add Task</button>
+                </h2>
+                <ul class="upcoming-list" id="upcoming-list">
+                    <div class="empty-state" id="empty-upcoming">
+                        No upcoming tasks. Add your first task!
+                    </div>
+                </ul>
+
+                <h2 class="section-title">Collections</h2>
+                <div class="collections-grid">
+                    <div class="collection-item collection-1" onclick="openCollection('Work')">💼</div>
+                    <div class="collection-item collection-2" onclick="openCollection('Personal')">🏠</div>
+                    <div class="collection-item collection-3" onclick="openCollection('Health')">💪</div>
+                    <div class="collection-item collection-4" onclick="openCollection('Travel')">✈️</div>
+                    <div class="collection-item collection-5" onclick="openCollection('Learning')">📚</div>
+                    <div class="collection-item collection-6" onclick="openCollection('Ideas')">💡</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reminder Modal -->
+    <div class="modal" id="reminder-modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Add New Reminder</h3>
+            <div class="input-group">
+                <label for="reminder-text">Reminder Text</label>
+                <textarea id="reminder-text" placeholder="What do you want to remember?"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeModal('reminder-modal')">Cancel</button>
+                <button class="btn-modal btn-save" onclick="addReminder()">Add Reminder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal" id="task-modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Add New Task</h3>
+            <div class="input-group">
+                <label for="task-title">Task Title</label>
+                <input type="text" id="task-title" placeholder="What needs to be done?">
+            </div>
+            <div class="input-group">
+                <label for="task-time">Time</label>
+                <input type="datetime-local" id="task-time">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeModal('task-modal')">Cancel</button>
+                <button class="btn-modal btn-save" onclick="addTask()">Add Task</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('service-worker.js');
+        // Data storage
+        let reminders = [];
+        let tasks = [];
+        let reminderIdCounter = 1;
+        let taskIdCounter = 1;
+
+
+
+        // Initialize app
+        function init() {
+            renderReminders();
+            renderTasks();
+        }
+
+        // Modal functions
+        function openReminderModal() {
+            document.getElementById('reminder-modal').classList.add('active');
+            document.getElementById('reminder-text').focus();
+        }
+
+        function openTaskModal() {
+            document.getElementById('task-modal').classList.add('active');
+            document.getElementById('task-title').focus();
+            
+            // Set default time to current time + 1 hour
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            document.getElementById('task-time').value = now.toISOString().slice(0, 16);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            // Clear form fields
+            if (modalId === 'reminder-modal') {
+                document.getElementById('reminder-text').value = '';
+            } else if (modalId === 'task-modal') {
+                document.getElementById('task-title').value = '';
+                document.getElementById('task-time').value = '';
+            }
+        }
+
+        // Reminder functions
+        function addReminder() {
+            const text = document.getElementById('reminder-text').value.trim();
+            if (!text) return;
+
+            const reminder = {
+                id: reminderIdCounter++,
+                text: text,
+                createdAt: new Date()
+            };
+
+            reminders.push(reminder);
+            renderReminders();
+            closeModal('reminder-modal');
+        }
+
+        function deleteReminder(id) {
+            reminders = reminders.filter(r => r.id !== id);
+            renderReminders();
+        }
+
+        function renderReminders() {
+            const container = document.getElementById('reminders-container');
+            container.innerHTML = '';
+
+            reminders.forEach(reminder => {
+                const card = document.createElement('div');
+                card.className = 'reminder-card';
+                card.innerHTML = `
+                    <div class="reminder-text">${reminder.text}</div>
+                    <div class="reminder-actions">
+                        <button class="btn-small btn-delete" onclick="deleteReminder(${reminder.id})">Delete</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Task functions
+        function addTask() {
+            const title = document.getElementById('task-title').value.trim();
+            const time = document.getElementById('task-time').value;
+            if (!title) return;
+
+            const task = {
+                id: taskIdCounter++,
+                title: title,
+                time: time,
+                completed: false,
+                createdAt: new Date()
+            };
+
+            tasks.push(task);
+            renderTasks();
+            closeModal('task-modal');
+        }
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                renderTasks();
+            }
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            renderTasks();
+        }
+
+        function formatTaskTime(timeString) {
+            if (!timeString) return '';
+            const date = new Date(timeString);
+            const now = new Date();
+            
+            if (date.toDateString() === now.toDateString()) {
+                return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' Today';
+            } else {
+                const tomorrow = new Date(now);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                if (date.toDateString() === tomorrow.toDateString()) {
+                    return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' Tomorrow';
+                } else {
+                    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                }
+            }
+        }
+
+        function renderTasks() {
+            const list = document.getElementById('upcoming-list');
+            const emptyState = document.getElementById('empty-upcoming');
+            
+            if (tasks.length === 0) {
+                emptyState.style.display = 'block';
+                list.innerHTML = '<div class="empty-state" id="empty-upcoming">No upcoming tasks. Add your first task!</div>';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            list.innerHTML = '';
+
+            // Sort tasks by time
+            const sortedTasks = [...tasks].sort((a, b) => {
+                if (!a.time && !b.time) return 0;
+                if (!a.time) return 1;
+                if (!b.time) return -1;
+                return new Date(a.time) - new Date(b.time);
+            });
+
+            sortedTasks.forEach(task => {
+                const item = document.createElement('li');
+                item.className = 'upcoming-item';
+                item.innerHTML = `
+                    <div class="item-checkbox ${task.completed ? 'completed' : ''}" 
+                         onclick="toggleTask(${task.id})"></div>
+                    <div class="item-details">
+                        <div class="item-title ${task.completed ? 'completed' : ''}">${task.title}</div>
+                        <div class="item-time">${formatTaskTime(task.time)}</div>
+                    </div>
+                    <button class="item-delete" onclick="deleteTask(${task.id})">×</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // Collection function
+        function openCollection(name) {
+            alert(`Opening ${name} collection! (Feature coming soon)`);
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
         });
-      }
+
+        // Initialize app when page loads
+        init();
     </script>
-  </body>
+</body>
 </html>
