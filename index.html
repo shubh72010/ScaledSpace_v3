@@ -11,6 +11,7 @@
       --text: #eee;
       --accent: #00ffae;
       --radius: 12px;
+      --red: #ff3b3b;
     }
     html, body {
       height: 100%;
@@ -38,7 +39,28 @@
     h2, h3 {
       margin-top: 0;
     }
-    textarea, input[type="file"] {
+    .red-hint {
+      color: var(--red);
+      font-size: 0.95em;
+      margin-bottom: 10px;
+    }
+    textarea, .edit-note {
+      width: 100%;
+      box-sizing: border-box;
+      background: #2a0000;
+      color: #fff;
+      border: 1.5px solid var(--red);
+      border-radius: var(--radius);
+      padding: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    textarea:focus, .edit-note:focus {
+      border-color: #ff5555;
+      background: #3b0000;
+    }
+    input[type="file"] {
       width: 100%;
       box-sizing: border-box;
       background: #1a1a1a;
@@ -60,6 +82,33 @@
       margin-bottom: 6px;
       font-size: 1rem;
     }
+    .item-btn {
+      padding: 4px 8px;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      margin-left: 4px;
+      margin-top: 0;
+      margin-bottom: 0;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .item-btn:hover {
+      background: #c70000;
+    }
+    .edit-btn {
+      background: #fff;
+      color: #333;
+      border: 1.5px solid #ff3b3b;
+      margin-right: 4px;
+      font-size: 0.9rem;
+    }
+    .edit-btn:hover {
+      background: #ff3b3b;
+      color: #fff;
+    }
     button:disabled {
       background: #444;
       color: #999;
@@ -79,12 +128,16 @@
       display: block;
       margin: 0 auto;
     }
+    .item-controls {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
     audio {
       width: 100%;
       outline: none;
     }
-
-    /* Responsive styles */
     @media (max-width: 600px) {
       .container {
         max-width: 98vw;
@@ -97,7 +150,7 @@
       h2, h3 {
         font-size: 1.3rem;
       }
-      button, textarea {
+      button, textarea, .edit-note {
         font-size: 1rem;
       }
     }
@@ -105,7 +158,7 @@
       h2, h3 {
         font-size: 1.1rem;
       }
-      button, textarea {
+      button, textarea, .edit-note {
         font-size: 0.9rem;
       }
     }
@@ -113,7 +166,10 @@
 </head>
 <body>
   <div class="container">
-    <h2>Essential Space</h2>
+    <h2>ScaledSpace</h2>
+    <div class="red-hint">
+      Hint: Everything is saved locally and stays private.
+    </div>
     <textarea id="noteInput" placeholder="Quick note..." rows="2"></textarea>
     <button onclick="addNote()">Add Note</button>
 
@@ -130,12 +186,12 @@
     <h3>Your Space</h3>
     <div id="essentials"></div>
   </div>
-
   <script>
     // Local storage key
     const STORAGE_KEY = "essential_space_data";
     let essentials = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     let mediaRecorder, audioChunks = [];
+    let editIndex = null;
 
     function saveEssentials() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(essentials));
@@ -188,22 +244,79 @@
       }
     }
 
+    function deleteItem(index) {
+      essentials.splice(index, 1);
+      saveEssentials();
+    }
+
+    function editNote(index) {
+      editIndex = index;
+      renderEssentials();
+    }
+
+    function saveEdit(index) {
+      const newText = document.getElementById('edit-note-' + index).value.trim();
+      if (newText) {
+        essentials[index].content = newText;
+        editIndex = null;
+        saveEssentials();
+      }
+    }
+
+    function cancelEdit() {
+      editIndex = null;
+      renderEssentials();
+    }
+
     function renderEssentials() {
       const container = document.getElementById('essentials');
       container.innerHTML = '';
-      essentials.forEach(item => {
+      essentials.forEach((item, i) => {
         const div = document.createElement('div');
         div.className = 'item';
         if (item.type === 'note') {
-          div.textContent = `📝 ${item.content}`;
+          if (editIndex === i) {
+            // Edit mode
+            div.innerHTML = `
+              <textarea class="edit-note" id="edit-note-${i}" rows="2">${item.content}</textarea>
+              <div class="item-controls">
+                <button class="edit-btn" onclick="saveEdit(${i})">Save</button>
+                <button class="item-btn" onclick="cancelEdit()">Cancel</button>
+              </div>
+            `;
+          } else {
+            div.innerHTML = `
+              📝 ${item.content}
+              <div class="item-controls">
+                <button class="edit-btn" onclick="editNote(${i})">✏️ Edit</button>
+                <button class="item-btn" onclick="deleteItem(${i})">🗑️ Delete</button>
+              </div>
+            `;
+          }
         } else if (item.type === 'image') {
-          div.innerHTML = `🖼️ <img src="${item.content}" alt="Captured">`;
+          div.innerHTML = `
+            🖼️ <img src="${item.content}" alt="Captured">
+            <div class="item-controls">
+              <button class="item-btn" onclick="deleteItem(${i})">🗑️ Delete</button>
+            </div>
+          `;
         } else if (item.type === 'audio') {
-          div.innerHTML = `🔊 <audio controls src="${item.content}"></audio>`;
+          div.innerHTML = `
+            🔊 <audio controls src="${item.content}"></audio>
+            <div class="item-controls">
+              <button class="item-btn" onclick="deleteItem(${i})">🗑️ Delete</button>
+            </div>
+          `;
         }
         container.appendChild(div);
       });
     }
+
+    // To make edit/delete globally accessible for button onclicks
+    window.editNote = editNote;
+    window.saveEdit = saveEdit;
+    window.cancelEdit = cancelEdit;
+    window.deleteItem = deleteItem;
 
     // Initial render
     renderEssentials();
