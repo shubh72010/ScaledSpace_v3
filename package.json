@@ -1,0 +1,21 @@
+{
+  "name": "scaledspace_v3",
+  "version": "1.0.0",
+  "private": true,
+  "homepage": "https://shubh72010.github.io/ScaledSpace_v3",
+  "dependencies": {
+    "framer-motion": "^11.0.17",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-parallax-tilt": "^1.8.108"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.0.0"
+  }
+}
