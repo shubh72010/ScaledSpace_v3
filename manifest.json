@@ -1,21 +1,20 @@
 {
-  "name": "ScaledSpace",
   "short_name": "ScaledSpace",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#ff3333",
-  "description": "Your minimal, nothing-style notes space",
+  "name": "ScaledSpace Nothing OS",
   "icons": [
     {
       "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "sizes": "192x192"
     },
     {
       "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "sizes": "512x512"
     }
-  ]
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#181818",
+  "background_color": "#0c0c0e"
 }
