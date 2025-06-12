@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Essential Space</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #181818; color: #eee; margin: 0; padding: 20px; }
+    .container { max-width: 400px; margin: auto; background: #232323; padding: 20px; border-radius: 12px; }
+    button, input[type="file"] { margin: 10px 0; }
+    .item { border-bottom: 1px solid #444; padding: 8px 0; }
+    audio { width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Essential Space</h2>
+    <textarea id="noteInput" placeholder="Quick note..." rows="2" style="width:100%"></textarea><br>
+    <button onclick="addNote()">Add Note</button><br>
+
+    <label>Image:</label>
+    <input type="file" id="imageInput" accept="image/*" onchange="addImage(event)"><br>
+
+    <label>Audio:</label>
+    <button onclick="startRecording()">Record</button>
+    <button onclick="stopRecording()" disabled id="stopBtn">Stop</button><br>
+    <div id="recordingStatus"></div>
+
+    <h3>Your Essentials</h3>
+    <div id="essentials"></div>
+  </div>
+
+  <script>
+    // Local storage key
+    const STORAGE_KEY = "essential_space_data";
+    let essentials = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    let mediaRecorder, audioChunks = [];
+
+    function saveEssentials() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(essentials));
+      renderEssentials();
+    }
+
+    function addNote() {
+      const note = document.getElementById('noteInput').value.trim();
+      if(note) {
+        essentials.unshift({type: 'note', content: note, timestamp: Date.now()});
+        document.getElementById('noteInput').value = '';
+        saveEssentials();
+      }
+    }
+
+    function addImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          essentials.unshift({type: 'image', content: e.target.result, timestamp: Date.now()});
+          saveEssentials();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function startRecording() {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(audioChunks, {type: 'audio/webm'});
+          const url = URL.createObjectURL(blob);
+          essentials.unshift({type: 'audio', content: url, timestamp: Date.now()});
+          audioChunks = [];
+          saveEssentials();
+        };
+        mediaRecorder.start();
+        document.getElementById('stopBtn').disabled = false;
+        document.getElementById('recordingStatus').textContent = "Recording...";
+      });
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+        document.getElementById('stopBtn').disabled = true;
+        document.getElementById('recordingStatus').textContent = "";
+      }
+    }
+
+    function renderEssentials() {
+      const container = document.getElementById('essentials');
+      container.innerHTML = '';
+      essentials.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        if (item.type === 'note') {
+          div.textContent = `📝 ${item.content}`;
+        } else if (item.type === 'image') {
+          div.innerHTML = `🖼️ <img src="${item.content}" style="max-width:100px;max-height:100px;">`;
+        } else if (item.type === 'audio') {
+          div.innerHTML = `🔊 <audio controls src="${item.content}"></audio>`;
+        }
+        container.appendChild(div);
+      });
+    }
+
+    // Initial render
+    renderEssentials();
+  </script>
+</body>
+</html>
