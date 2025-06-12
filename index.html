@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#181818" />
     <title>ScaledSpace Nothing OS</title>
-    <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json" />
-    <!-- Favicon/Icon -->
     <link rel="icon" href="icon-192.png" />
     <style>
       body {
@@ -19,16 +17,14 @@
       .text-2xl { font-size: 2rem; }
       .font-semibold { font-weight: 600; }
       .text-center { text-align: center; }
-      /* Add more custom styles as needed */
     </style>
   </head>
   <body>
     <div id="root"></div>
     <script>
-      // Register Service Worker for PWA support
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js');
+          navigator.serviceWorker.register('service-worker.js');
         });
       }
     </script>
