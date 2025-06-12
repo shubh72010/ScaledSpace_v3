@@ -5,92 +5,337 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space App</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #fff; min-height: 100vh; padding: 20px;
+            background: #fff;
+            min-height: 100vh;
+            padding: 20px;
         }
-        .screen { max-width: 375px; margin: 0 auto; min-height: 100vh; background: #fff; position: relative; }
+
+        .screen {
+            max-width: 375px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #fff;
+            position: relative;
+        }
+
         .header {
-            display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 20px 0;
         }
-        .title { font-size: 32px; font-weight: 700; color: #000; }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #000;
+        }
+
         .profile-pic {
-            width: 40px; height: 40px; border-radius: 50%;
-            background: linear-gradient(135deg, #ddd, #aaa); cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ddd, #aaa);
+            cursor: pointer;
         }
-        .settings-btn {
-            background: none; border: none; font-size: 24px; cursor: pointer; margin-left: 12px; color: #333; transition: 0.2s;
+
+        .main-content {
+            padding: 24px 20px;
+            overflow-y: auto;
         }
-        .settings-btn:hover { color: #007AFF; }
-        .main-content { padding: 24px 20px; overflow-y: auto; }
+
         .add-reminder-btn {
-            background: #007AFF; color: white; border: none; border-radius: 16px; padding: 16px 20px;
-            font-size: 16px; font-weight: 600; width: 100%; margin-bottom: 24px; cursor: pointer; transition: 0.2s;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .add-reminder-btn:hover { background: #0056d3; transform: translateY(-2px); }
+
+        .add-reminder-btn:hover {
+            background: #0056d3;
+            transform: translateY(-2px);
+        }
+
         .reminder-card {
-            background: #f8f9fa; border-radius: 16px; padding: 20px; margin-bottom: 16px;
-            border-left: 4px solid #007AFF; position: relative; animation: slideIn 0.3s ease;
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid #007AFF;
+            position: relative;
+            animation: slideIn 0.3s ease;
         }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .reminder-text { font-size: 15px; line-height: 1.5; color: #333; margin-bottom: 12px; }
-        .reminder-actions { display: flex; gap: 8px; justify-content: flex-end; }
-        .btn-small { padding: 6px 12px; border: none; border-radius: 8px; font-size: 12px; cursor: pointer; transition: 0.2s; }
-        .btn-delete { background: #dc3545; color: white; }
-        .btn-delete:hover { background: #c82333; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reminder-text {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .reminder-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-complete {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-complete:hover {
+            background: #218838;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
         .section-title {
-            font-size: 20px; font-weight: 700; color: #000; margin: 24px 0 16px;
-            display: flex; justify-content: space-between; align-items: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: #000;
+            margin: 24px 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
         .add-task-btn {
-            background: none; border: 2px dashed #007AFF; color: #007AFF;
-            border-radius: 8px; padding: 8px 12px; font-size: 12px; cursor: pointer; transition: 0.2s;
+            background: none;
+            border: 2px dashed #007AFF;
+            color: #007AFF;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .add-task-btn:hover { background: #007AFF; color: white; }
-        .upcoming-list { list-style: none; min-height: 60px; }
+
+        .add-task-btn:hover {
+            background: #007AFF;
+            color: white;
+        }
+
+        .upcoming-list {
+            list-style: none;
+            min-height: 60px;
+        }
+
         .upcoming-item {
-            display: flex; align-items: center; gap: 12px; padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s; position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
         }
-        .upcoming-item:hover { background: #f8f9fa; margin: 0 -20px; padding: 12px 20px; border-radius: 8px; }
+
+        .upcoming-item:hover {
+            background: #f8f9fa;
+            margin: 0 -20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+        }
+
+        .upcoming-item:last-child {
+            border-bottom: none;
+        }
+
         .item-checkbox {
-            width: 20px; height: 20px; border: 2px solid #007AFF; border-radius: 50%;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #007AFF;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
         }
-        .item-checkbox.completed { background: #007AFF; color: white; }
-        .item-checkbox.completed::after { content: '✓'; font-size: 12px; }
-        .item-details { flex: 1; }
-        .item-title { font-size: 15px; font-weight: 500; color: #333; margin-bottom: 2px; }
-        .item-title.completed { text-decoration: line-through; color: #999; }
-        .item-time { font-size: 12px; color: #666; }
+
+        .item-checkbox.completed {
+            background: #007AFF;
+            color: white;
+        }
+
+        .item-checkbox.completed::after {
+            content: '✓';
+            font-size: 12px;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .item-title.completed {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .item-time {
+            font-size: 12px;
+            color: #666;
+        }
+
         .item-delete {
-            background: #dc3545; color: white; border: none; width: 24px; height: 24px;
-            border-radius: 50%; font-size: 12px; cursor: pointer; opacity: 0; transition: 0.2s;
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s;
         }
-        .upcoming-item:hover .item-delete { opacity: 1; }
-        .empty-state { text-align: center; color: #999; font-size: 14px; padding: 40px 20px; }
+
+        .upcoming-item:hover .item-delete {
+            opacity: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            padding: 40px 20px;
+        }
+
+        /* Modal Styles */
         .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
-        .modal.active { display: flex; }
+
+        .modal.active {
+            display: flex;
+        }
+
         .modal-content {
-            background: white; border-radius: 16px; padding: 24px; width: 320px; max-width: 90vw;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            width: 320px;
+            max-width: 90vw;
         }
-        .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
-        .input-group { margin-bottom: 16px; }
-        .input-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; color: #333; }
-        .input-group input, .input-group textarea {
-            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; resize: vertical;
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
         }
-        .input-group textarea { min-height: 80px; }
-        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
-        .btn-modal { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; transition: 0.2s; }
-        .btn-cancel { background: #f8f9fa; color: #333; }
-        .btn-cancel:hover { background: #e9ecef; }
-        .btn-save { background: #007AFF; color: white; }
-        .btn-save:hover { background: #0056d3; }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .input-group textarea {
+            min-height: 80px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .btn-cancel:hover {
+            background: #e9ecef;
+        }
+
+        .btn-save {
+            background: #007AFF;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #0056d3;
+        }
     </style>
 </head>
 <body>
@@ -98,19 +343,25 @@
         <div class="header">
             <h1 class="title">Space</h1>
             <div class="profile-pic"></div>
-            <button class="settings-btn" onclick="openSettingsModal()">⚙️</button>
         </div>
 
         <div class="main-content">
-            <button class="add-reminder-btn" onclick="openReminderModal()">+ Add New Reminder</button>
-            <div id="reminders-container"></div>
+            <button class="add-reminder-btn" onclick="openReminderModal()">
+                + Add New Reminder
+            </button>
+
+            <div id="reminders-container">
+                <!-- Reminders will be added here -->
+            </div>
 
             <h2 class="section-title">
                 Upcoming
                 <button class="add-task-btn" onclick="openTaskModal()">+ Add Task</button>
             </h2>
             <ul class="upcoming-list" id="upcoming-list">
-                <div class="empty-state" id="empty-upcoming">No upcoming tasks. Add your first task!</div>
+                <div class="empty-state" id="empty-upcoming">
+                    No upcoming tasks. Add your first task!
+                </div>
             </ul>
         </div>
     </div>
@@ -149,62 +400,179 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div class="modal" id="settings-modal">
-        <div class="modal-content">
-            <h3 class="modal-title">Settings</h3>
-            <div class="input-group"><p>Settings will go here!</p></div>
-            <div class="modal-actions">
-                <button class="btn-modal btn-cancel" onclick="closeModal('settings-modal')">Close</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        let reminders = [], tasks = [], reminderIdCounter = 1, taskIdCounter = 1;
+        // Data storage
+        let reminders = [];
+        let tasks = [];
+        let reminderIdCounter = 1;
+        let taskIdCounter = 1;
 
-        function init() { renderReminders(); renderTasks(); }
-        function openReminderModal() { document.getElementById('reminder-modal').classList.add('active'); document.getElementById('reminder-text').focus(); }
+        // Initialize app
+        function init() {
+            renderReminders();
+            renderTasks();
+        }
+
+        // Modal functions
+        function openReminderModal() {
+            document.getElementById('reminder-modal').classList.add('active');
+            document.getElementById('reminder-text').focus();
+        }
+
         function openTaskModal() {
             document.getElementById('task-modal').classList.add('active');
             document.getElementById('task-title').focus();
-            const now = new Date(); now.setHours(now.getHours() + 1);
+            
+            // Set default time to current time + 1 hour
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
             document.getElementById('task-time').value = now.toISOString().slice(0, 16);
         }
-        function openSettingsModal() { document.getElementById('settings-modal').classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); if (id === 'reminder-modal') document.getElementById('reminder-text').value = ''; if (id === 'task-modal') { document.getElementById('task-title').value = ''; document.getElementById('task-time').value = ''; } }
-        function addReminder() { const text = document.getElementById('reminder-text').value.trim(); if (!text) return; reminders.push({ id: reminderIdCounter++, text, createdAt: new Date() }); renderReminders(); closeModal('reminder-modal'); }
-        function deleteReminder(id) { reminders = reminders.filter(r => r.id !== id); renderReminders(); }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            // Clear form fields
+            if (modalId === 'reminder-modal') {
+                document.getElementById('reminder-text').value = '';
+            } else if (modalId === 'task-modal') {
+                document.getElementById('task-title').value = '';
+                document.getElementById('task-time').value = '';
+            }
+        }
+
+        // Reminder functions
+        function addReminder() {
+            const text = document.getElementById('reminder-text').value.trim();
+            if (!text) return;
+
+            const reminder = {
+                id: reminderIdCounter++,
+                text: text,
+                createdAt: new Date()
+            };
+
+            reminders.push(reminder);
+            renderReminders();
+            closeModal('reminder-modal');
+        }
+
+        function deleteReminder(id) {
+            reminders = reminders.filter(r => r.id !== id);
+            renderReminders();
+        }
+
         function renderReminders() {
-            const container = document.getElementById('reminders-container'); container.innerHTML = '';
+            const container = document.getElementById('reminders-container');
+            container.innerHTML = '';
+
             reminders.forEach(reminder => {
-                const card = document.createElement('div'); card.className = 'reminder-card';
-                card.innerHTML = `<div class="reminder-text">${reminder.text}</div><div class="reminder-actions"><button class="btn-small btn-delete" onclick="deleteReminder(${reminder.id})">Delete</button></div>`;
+                const card = document.createElement('div');
+                card.className = 'reminder-card';
+                card.innerHTML = `
+                    <div class="reminder-text">${reminder.text}</div>
+                    <div class="reminder-actions">
+                        <button class="btn-small btn-delete" onclick="deleteReminder(${reminder.id})">Delete</button>
+                    </div>
+                `;
                 container.appendChild(card);
             });
         }
+
+        // Task functions
         function addTask() {
-            const title = document.getElementById('task-title').value.trim(), time = document.getElementById('task-time').value;
+            const title = document.getElementById('task-title').value.trim();
+            const time = document.getElementById('task-time').value;
             if (!title) return;
-            tasks.push({ id: taskIdCounter++, title, time, completed: false, createdAt: new Date() });
-            renderTasks(); closeModal('task-modal');
+
+            const task = {
+                id: taskIdCounter++,
+                title: title,
+                time: time,
+                completed: false,
+                createdAt: new Date()
+            };
+
+            tasks.push(task);
+            renderTasks();
+            closeModal('task-modal');
         }
-        function toggleTask(id) { const t = tasks.find(t => t.id === id); if (t) { t.completed = !t.completed; renderTasks(); } }
-        function deleteTask(id) { tasks = tasks.filter(t => t.id !== id); renderTasks(); }
-        function formatTaskTime(s) { if (!s) return ''; const d = new Date(s), n = new Date(); if (d.toDateString() === n.toDateString()) return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' Today'; const t = new Date(n); t.setDate(t.getDate()+1); if (d.toDateString() === t.toDateString()) return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' Tomorrow'; return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                renderTasks();
+            }
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            renderTasks();
+        }
+
+        function formatTaskTime(timeString) {
+            if (!timeString) return '';
+            const date = new Date(timeString);
+            const now = new Date();
+            
+            if (date.toDateString() === now.toDateString()) {
+                return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' Today';
+            } else {
+                const tomorrow = new Date(now);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                if (date.toDateString() === tomorrow.toDateString()) {
+                    return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' Tomorrow';
+                } else {
+                    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                }
+            }
+        }
+
         function renderTasks() {
-            const list = document.getElementById('upcoming-list'), empty = document.getElementById('empty-upcoming');
-            if (tasks.length === 0) { empty.style.display = 'block'; list.innerHTML = '<div class="empty-state" id="empty-upcoming">No upcoming tasks. Add your first task!</div>'; return; }
-            empty.style.display = 'none'; list.innerHTML = '';
-            [...tasks].sort((a,b)=>(!a.time?1:!b.time?-1:new Date(a.time)-new Date(b.time))).forEach(task => {
-                const item = document.createElement('li'); item.className = 'upcoming-item';
-                item.innerHTML = `<div class="item-checkbox ${task.completed?'completed':''}" onclick="toggleTask(${task.id})"></div>
-                <div class="item-details"><div class="item-title ${task.completed?'completed':''}">${task.title}</div><div class="item-time">${formatTaskTime(task.time)}</div></div>
-                <button class="item-delete" onclick="deleteTask(${task.id})">×</button>`;
+            const list = document.getElementById('upcoming-list');
+            const emptyState = document.getElementById('empty-upcoming');
+            
+            if (tasks.length === 0) {
+                emptyState.style.display = 'block';
+                list.innerHTML = '<div class="empty-state" id="empty-upcoming">No upcoming tasks. Add your first task!</div>';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            list.innerHTML = '';
+
+            // Sort tasks by time
+            const sortedTasks = [...tasks].sort((a, b) => {
+                if (!a.time && !b.time) return 0;
+                if (!a.time) return 1;
+                if (!b.time) return -1;
+                return new Date(a.time) - new Date(b.time);
+            });
+
+            sortedTasks.forEach(task => {
+                const item = document.createElement('li');
+                item.className = 'upcoming-item';
+                item.innerHTML = `
+                    <div class="item-checkbox ${task.completed ? 'completed' : ''}" 
+                         onclick="toggleTask(${task.id})"></div>
+                    <div class="item-details">
+                        <div class="item-title ${task.completed ? 'completed' : ''}">${task.title}</div>
+                        <div class="item-time">${formatTaskTime(task.time)}</div>
+                    </div>
+                    <button class="item-delete" onclick="deleteTask(${task.id})">×</button>
+                `;
                 list.appendChild(item);
             });
         }
-        document.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.classList.remove('active'); });
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        });
+
+        // Initialize app when page loads
         init();
     </script>
 </body>
